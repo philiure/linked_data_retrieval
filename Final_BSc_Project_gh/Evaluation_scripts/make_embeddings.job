@@ -1,0 +1,31 @@
+#!/bin/bash
+#SBATCH --time=48:00:00
+#SBATCH -N 1
+#SBATCH -p gpu
+#SBATCH --gpus=2
+set -e
+echo Job script: make embeddings
+echo This Job is run on:
+date
+
+mkdir -p /scratch/work/
+cp -r /home/renzen/vector_evaluation/* /scratch/work/
+ls /scratch/work/
+
+cd /scratch/work/
+
+module load 2021
+module load Anaconda3/2021.05
+module load CUDA/11.6.0
+module load cuDNN/8.4.1.50-CUDA-11.6.0
+
+python -m pip install -r /home/renzen/vector_evaluation/requirements.txt
+python -m pip install -U sentence-transformers torch torchvision
+
+srun python -u /home/renzen/vector_evaluation/make_embeddings.py > /home/renzen/job_logs/embedrun.txt
+
+cp -r /scratch/work/doc_embed_asym.pkl.bz2 /home/renzen/vector_evaluation/
+
+echo This job is finished on:
+date
+

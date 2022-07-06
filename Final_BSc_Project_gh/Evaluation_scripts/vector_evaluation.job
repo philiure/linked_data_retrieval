@@ -1,0 +1,31 @@
+#!/bin/bash
+#SBATCH --time=03:00:00
+#SBATCH -N 1 --partition=fat --constraint=gold_6126 --mem=1T
+set -e
+echo Job script vector search
+echo This job is run on:
+date
+
+mkdir -p /nfs/scratch/renzen/work/
+cp -r * /nfs/scratch/renzen/work/
+
+cd /nfs/scratch/renzen/work/
+
+pwd
+
+module load 2021
+module load Anaconda3/2021.05
+
+python -m pip install -r /home/renzen/vector_evaluation/requirements.txt
+
+echo WORKING DIRECTORY:
+pwd
+echo CONTAINS:
+ls
+
+srun python -u /nfs/scratch/renzen/work/vector_evaluation.py > /home/renzen/job_logs/searchrun.txt
+
+cp -r /nfs/scratch/renzen/work/vector_results_script.pkl.bz2 /home/renzen/vector_evaluation/
+
+echo This job is finished on:
+date
